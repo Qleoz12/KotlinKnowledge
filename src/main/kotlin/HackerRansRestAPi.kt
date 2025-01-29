@@ -147,12 +147,14 @@ Cityscape Marathon.
  */
 
 fun fastestRunner(marathon: String, sex: String): String {
-    if (marathon.isBlank() || sex.isBlank()) {
+    //check not null paramaters
+    if (marathon.isNullOrBlank() || sex.isNullOrBlank()) {
         return "Invalid input"
     }
 
     val baseurl = "https://jsonmock.hackerrank.com/api/marathon"
-    var fastestTime = Double.MAX_VALUE
+    //default
+    var fastestTime = 999.99
     var fastestRunnerName: String? = null
 
     var page = 1
@@ -177,17 +179,18 @@ fun fastestRunner(marathon: String, sex: String): String {
                 val gson = Gson()
                 val jsonMapped = gson.fromJson(response, MarathonApiResponse::class.java)
 
-                totalPages = jsonMapped.total_pages
+                totalPages = jsonMapped.total_pages //update real total pages
                 //println("$jsonMapped")
                 //println("$totalPages")
 
 
 
                 for (runner in jsonMapped.data) {
+                    //avoid division errors
                     if (runner.average_speed > 0) {
                         val raceTime = runner.distance_run / runner.average_speed
                         runner.fastCalculated=raceTime
-                        savedMarathonists.add(runner)
+                        savedMarathonists.add(runner)  //save in a list
                         if (raceTime < fastestTime || (raceTime == fastestTime && runner.name < (fastestRunnerName ?: ""))) {
                             fastestTime = raceTime
                             fastestRunnerName = runner.name
@@ -269,5 +272,5 @@ data class Marathonist(
     val age: Int,
     val distance_run: Double,
     val average_speed: Double,
-    var fastCalculated:  Double
+    var fastCalculated:  Double //time = distance_run / average_speed
 )
